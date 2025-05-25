@@ -55,6 +55,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 			params: { max_period: fictitiousPlanet.result.properties.orbital_period },
 		});
 
+		if (planetsRes.data?.length === 0) {
+			return {
+				statusCode: 404,
+				body: JSON.stringify({ error: 'No similar planet found' }),
+			};
+		}
+
 		const planet = planetsRes.data[0];
 		const now = new Date();
 		const fusionado = {
