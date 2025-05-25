@@ -7,6 +7,7 @@ const TABLE_NAME = process.env.TABLE_NAME || '';
 export const handler: APIGatewayProxyHandler = async (event) => {
 	try {
 		const queryParams = event.queryStringParameters || {};
+		console.log('Received query parameters:', JSON.stringify(queryParams));
 		const limit = parseInt(queryParams?.limit || '10', 10);
 		const lastKey = queryParams?.lastKey;
 

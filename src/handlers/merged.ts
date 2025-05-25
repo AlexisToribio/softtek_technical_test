@@ -12,6 +12,7 @@ const PLANETS_API_KEY = process.env.PLANETS_API_KEY || '';
 export const handler: APIGatewayProxyHandler = async (event) => {
 	try {
 		const characterName = event.queryStringParameters?.name;
+		console.log('Received character name:', characterName);
 		if (!characterName) {
 			return {
 				statusCode: 400,
@@ -33,6 +34,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		);
 
 		if (cachedRes.Item && cachedRes.Item.data) {
+			console.log('Cached data:', JSON.stringify(cachedRes.Item.data.S));
 			return {
 				statusCode: 200,
 				body: cachedRes.Item.data.S || '{}',
@@ -43,17 +45,20 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		const swapiRes = await axios.get<SwapiResponse<SwapiPeople[]>>(
 			`${SWAPI_API_URL}/people/?name=${encodeURIComponent(characterName)}`
 		);
+		console.log('Character response:', JSON.stringify(swapiRes.data));
 		const character = swapiRes.data.result[0];
 		if (!character) return { statusCode: 404, body: JSON.stringify({ error: 'Character not found' }) };
 
 		const homeworld = await axios.get<SwapiResponse<SwapiPlanet>>(character.properties.homeworld);
 		const fictitiousPlanet = homeworld.data;
+		console.log('Homeworld response:', JSON.stringify(fictitiousPlanet));
 
 		// 3. Obtener planetas reales según el periodo orbital
 		const planetsRes = await axios.get<Planet[]>(`${PLANETS_API_URL}/planets`, {
 			headers: { 'x-api-key': PLANETS_API_KEY },
 			params: { max_period: fictitiousPlanet.result.properties.orbital_period },
 		});
+		console.log('Planets response:', JSON.stringify(planetsRes.data));
 
 		if (planetsRes.data?.length === 0) {
 			return {
@@ -78,6 +83,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		};
 
 		const serialized = JSON.stringify(fusionado);
+		console.log('Fusionado result:', serialized);
 
 		// 4. Guardar en cache (TTL 30 min)
 		await ddb.send(

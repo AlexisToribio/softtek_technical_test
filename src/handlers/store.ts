@@ -9,6 +9,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 	try {
 		const body = JSON.parse(event.body || '{}');
 		const { userId, ...rest } = body;
+		console.log('Received body:', JSON.stringify(body));
 
 		if (!userId) {
 			return {
