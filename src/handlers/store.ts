@@ -13,7 +13,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		if (!userId) {
 			return {
 				statusCode: 400,
-				body: JSON.stringify({ error: 'Missing required parameter: userId' }),
+				body: JSON.stringify({ error: 'Missing required field: userId' }),
 			};
 		}
 
