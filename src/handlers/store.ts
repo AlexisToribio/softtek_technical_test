@@ -43,7 +43,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 			}),
 		};
 	} catch (err) {
-		console.error('Error en POST /almacenar:', err);
+		console.error('Error POST /almacenar:', err);
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: 'Internal server error' }),

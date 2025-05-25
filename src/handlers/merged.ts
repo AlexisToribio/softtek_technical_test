@@ -117,7 +117,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 			body: serialized,
 		};
 	} catch (err: any) {
-		console.error('Error en /fusionados:', err);
+		console.error('Error GET /fusionados:', err);
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: 'Internal server error' }),

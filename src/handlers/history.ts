@@ -45,7 +45,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 			}),
 		};
 	} catch (error) {
-		console.error('Error fetching historial:', error);
+		console.error('Error GET /historial:', error);
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: 'Internal server error' }),
