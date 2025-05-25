@@ -11,7 +11,14 @@ const PLANETS_API_KEY = process.env.PLANETS_API_KEY || '';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
 	try {
-		const characterName = event.queryStringParameters?.name || 'Luke Skywalker';
+		const characterName = event.queryStringParameters?.name;
+		if (!characterName) {
+			return {
+				statusCode: 400,
+				body: JSON.stringify({ error: 'Missing required parameter: name' }),
+			};
+		}
+
 		const cacheKey = `fusionados#${characterName}`;
 
 		// 1. Buscar en cache
