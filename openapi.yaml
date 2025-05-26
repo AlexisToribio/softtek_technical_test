@@ -76,6 +76,21 @@ paths:
       tags:
         - Historial
       summary: Obtiene el historial de datos almacenados
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+          required: false
+          description: Maximum number of items to return (default 10)
+        - in: query
+          name: lastKey
+          schema:
+            type: string
+          required: false
+          description: Key to obtain the following results page
       responses:
         '200':
           description: History of merged data
@@ -145,3 +160,7 @@ components:
                             type: string
                   timestamp:
                     type: string
+        lastKey:
+          type: string
+          nullable: true
+          description: Key to get the next page of results (can be null if there are no more pages)

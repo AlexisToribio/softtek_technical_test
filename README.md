@@ -67,6 +67,11 @@ Almacena datos personalizados.
 
 Obtiene el historial de datos almacenados.
 
+**Parámetros de consulta:**
+
+- `limit` (integer, opcional, default: 10, mínimo: 1): Máximo número de elementos a retornar (por defecto 10)
+- `lastKey` (string, opcional): Clave para obtener la siguiente página de resultados
+
 **Respuestas:**
 
 - `200`: Historial de datos fusionados (`HistoryResponse`)
@@ -121,6 +126,7 @@ Obtiene el historial de datos almacenados.
 				"timestamp": "string"
 			}
 		}
-	]
+	],
+	"lastKey": "string|null"
 }
 ```
