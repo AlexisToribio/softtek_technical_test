@@ -38,7 +38,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		return {
 			statusCode: 201,
 			body: JSON.stringify({
-				message: 'Datos personalizados almacenados con éxito',
+				message: 'Item stored successfully',
 				itemId: item.uuid.S,
 			}),
 		};

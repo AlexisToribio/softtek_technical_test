@@ -36,7 +36,7 @@ describe('API Integration Tests', () => {
 			const response = await axios.post<StoreResponse>(`${baseURL}/v1/almacenar`, dataToStore);
 
 			expect(response.status).toBe(201);
-			expect(response.data).toHaveProperty('message', 'Datos personalizados almacenados con éxito');
+			expect(response.data).toHaveProperty('message', 'Item stored successfully');
 		});
 	});
 

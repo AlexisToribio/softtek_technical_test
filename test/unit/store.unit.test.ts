@@ -43,7 +43,7 @@ describe('POST /Almacenar', () => {
 
 		expect(response?.statusCode).toBe(201);
 		const body = JSON.parse(response?.body || '{}');
-		expect(body.message).toBe('Datos personalizados almacenados con éxito');
+		expect(body.message).toBe('Item stored successfully');
 		expect(body.itemId).toBe('mock-uuid');
 	});
 
@@ -58,6 +58,6 @@ describe('POST /Almacenar', () => {
 
 		expect(response?.statusCode).toBe(400);
 		const body = JSON.parse(response?.body || '{}');
-		expect(body.error).toBe('userId is required');
+		expect(body.error).toBe('Missing required field: userId');
 	});
 });

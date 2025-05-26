@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: Softtek API
+  version: 1.0.0
+  description: API para el technical test de Softtek
+
+servers:
+  - url: https://{apiId}.execute-api.us-east-1.amazonaws.com/api/v1
+    variables:
+      apiId:
+        default: 5uqw9h2nde
+
+tags:
+  - name: Fusionados
+    description: Endpoints para fusionar datos
+  - name: Almacenar
+    description: Endpoints para almacenar datos
+  - name: Historial
+    description: Endpoints para consultar historial
+
+paths:
+  /fusionados:
+    get:
+      tags:
+        - Fusionados
+      summary: Fusiona datos de un personaje de Star Wars con un planeta real
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Character's name
+      responses:
+        '200':
+          description: Data merged correctly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MergedResponse'
+        '400':
+          description: Missing required parameter
+        '404':
+          description: Character or planet not found
+
+  /almacenar:
+    post:
+      tags:
+        - Almacenar
+      summary: Almacena datos personalizados
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+              required:
+                - userId
+              additionalProperties:
+                description: Any additional custom properties to store for the user
+      responses:
+        '201':
+          description: Item stored successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreResponse'
+        '400':
+          description: Missing required field
+
+  /historial:
+    get:
+      tags:
+        - Historial
+      summary: Obtiene el historial de datos almacenados
+      responses:
+        '200':
+          description: History of merged data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryResponse'
+
+components:
+  schemas:
+    MergedResponse:
+      type: object
+      properties:
+        characterName:
+          type: string
+        homePlanet:
+          type: string
+        similarTo:
+          type: string
+        comparison:
+          type: object
+          properties:
+            orbitalPeriod:
+              type: object
+              properties:
+                fictitious:
+                  type: string
+                real:
+                  type: string
+        timestamp:
+          type: string
+    StoreResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        itemId:
+          type: string
+    HistoryResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              createdAt:
+                type: string
+              data:
+                type: object
+                properties:
+                  characterName:
+                    type: string
+                  homePlanet:
+                    type: string
+                  similarTo:
+                    type: string
+                  comparison:
+                    type: object
+                    properties:
+                      orbitalPeriod:
+                        type: object
+                        properties:
+                          fictitious:
+                            type: string
+                          real:
+                            type: string
+                  timestamp:
+                    type: string
