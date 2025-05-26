@@ -39,7 +39,7 @@ export interface SwapiPlanet {
 		rotation_period: string;
 		terrain: string;
 		gravity: string;
-		orbital_period: string;
+		orbital_period: string | 'unknown';
 		population: string;
 		url: string;
 	};

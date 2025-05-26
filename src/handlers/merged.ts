@@ -49,9 +49,23 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		const character = swapiRes.data.result[0];
 		if (!character) return { statusCode: 404, body: JSON.stringify({ error: 'Character not found' }) };
 
+		if (character.properties.homeworld === 'unknown') {
+			return {
+				statusCode: 404,
+				body: JSON.stringify({ error: 'Character has unknown homeworld' }),
+			};
+		}
+
 		const homeworld = await axios.get<SwapiResponse<SwapiPlanet>>(character.properties.homeworld);
 		const fictitiousPlanet = homeworld.data;
 		console.log('Homeworld response:', JSON.stringify(fictitiousPlanet));
+
+		if (fictitiousPlanet.result.properties.orbital_period === 'unknown') {
+			return {
+				statusCode: 404,
+				body: JSON.stringify({ error: 'Fictitious planet has unknown orbital period' }),
+			};
+		}
 
 		// 3. Obtener planetas reales según el periodo orbital
 		const planetsRes = await axios.get<Planet[]>(`${PLANETS_API_URL}/planets`, {
