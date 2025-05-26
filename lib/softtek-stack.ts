@@ -28,51 +28,44 @@ export class SofttekStack extends Stack {
 			PLANETS_API_KEY: process.env.PLANETS_API_KEY || '',
 		};
 
-		const bundling = {
-			externalModules: ['aws-sdk'],
+		const optionsLambda = {
+			architecture: lambda.Architecture.X86_64,
+			runtime: lambda.Runtime.NODEJS_20_X,
+			timeout: Duration.seconds(10),
+			memorySize: 128,
+			retryAttempts: 0,
+			tracing: lambda.Tracing.ACTIVE,
+			bundling: {
+				externalModules: ['aws-sdk'],
+			},
 		};
 
 		// Lambda function to handle fusionados
 		const mergedLambda = new NodejsFunction(this, 'MergedHandler', {
 			functionName: createName('lambda', 'merged'),
 			description: 'Lambda function to handle fusionados',
-			architecture: lambda.Architecture.X86_64,
-			timeout: Duration.seconds(10),
-			memorySize: 128,
-			retryAttempts: 0,
-			runtime: lambda.Runtime.NODEJS_20_X,
 			entry: path.join(__dirname, '../src/handlers/merged.ts'),
 			handler: 'handler',
 			environment,
-			bundling,
+			...optionsLambda,
 		});
 
 		const storeLambda = new NodejsFunction(this, 'StoreHandler', {
 			functionName: createName('lambda', 'store'),
 			description: 'Lambda function to handle almacenar',
-			architecture: lambda.Architecture.X86_64,
-			timeout: Duration.seconds(10),
-			memorySize: 128,
-			retryAttempts: 0,
-			runtime: lambda.Runtime.NODEJS_20_X,
 			entry: path.join(__dirname, '../src/handlers/store.ts'),
 			handler: 'handler',
 			environment,
-			bundling,
+			...optionsLambda,
 		});
 
 		const historyLambda = new NodejsFunction(this, 'HistoryHandler', {
 			functionName: createName('lambda', 'history'),
 			description: 'Lambda function to handle historial',
-			architecture: lambda.Architecture.X86_64,
-			timeout: Duration.seconds(10),
-			memorySize: 128,
-			retryAttempts: 0,
-			runtime: lambda.Runtime.NODEJS_20_X,
 			entry: path.join(__dirname, '../src/handlers/history.ts'),
 			handler: 'handler',
 			environment,
-			bundling,
+			...optionsLambda,
 		});
 
 		table.grantReadWriteData(mergedLambda);
@@ -103,11 +96,13 @@ export class SofttekStack extends Stack {
 				loggingLevel: apigateway.MethodLoggingLevel.INFO,
 				metricsEnabled: true,
 				stageName: 'api',
+				tracingEnabled: true,
+				throttlingRateLimit: 100,
+				throttlingBurstLimit: 500,
 			},
 		});
 
 		const v1 = api.root.addResource('v1');
-
 		v1.addResource('fusionados').addMethod('GET', new apigateway.LambdaIntegration(mergedLambda));
 		v1.addResource('almacenar').addMethod('POST', new apigateway.LambdaIntegration(storeLambda));
 		v1.addResource('historial').addMethod('GET', new apigateway.LambdaIntegration(historyLambda));
