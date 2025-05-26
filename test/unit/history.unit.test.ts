@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import { handler } from '../../src/handlers/history';
-import { ScanCommand } from '@aws-sdk/client-dynamodb';
+import { QueryCommand } from '@aws-sdk/client-dynamodb';
 
 let mockSend = {};
 
@@ -10,7 +10,7 @@ jest.mock('@aws-sdk/client-dynamodb', () => {
 		...originalModule,
 		DynamoDBClient: jest.fn().mockImplementation(() => ({
 			send: jest.fn((command) => {
-				if (command instanceof ScanCommand) return Promise.resolve(mockSend);
+				if (command instanceof QueryCommand) return Promise.resolve(mockSend);
 				return Promise.resolve({});
 			}),
 		})),
@@ -30,12 +30,12 @@ describe('GET /historial', () => {
 	test('It must return correctly ordered items', async () => {
 		const mockItems = [
 			{
-				createdAt: { S: '2025-05-23T10:00:00Z' },
-				data: { S: JSON.stringify({ message: 'Fusion 1' }) },
-			},
-			{
 				createdAt: { S: '2025-05-23T11:00:00Z' },
 				data: { S: JSON.stringify({ message: 'Fusion 2' }) },
+			},
+			{
+				createdAt: { S: '2025-05-23T10:00:00Z' },
+				data: { S: JSON.stringify({ message: 'Fusion 1' }) },
 			},
 		];
 

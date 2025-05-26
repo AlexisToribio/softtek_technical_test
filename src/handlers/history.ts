@@ -1,4 +1,4 @@
-import { DynamoDBClient, ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand, QueryCommandInput } from '@aws-sdk/client-dynamodb';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 
 const dynamo = new DynamoDBClient({});
@@ -11,34 +11,30 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 		const limit = parseInt(queryParams?.limit || '10', 10);
 		const lastKey = queryParams?.lastKey;
 
-		const input: ScanCommandInput = {
+		const input: QueryCommandInput = {
 			TableName: TABLE_NAME,
-			FilterExpression: '#t = :fusion',
-			ExpressionAttributeNames: {
-				'#t': 'type',
-			},
-			ExpressionAttributeValues: {
-				':fusion': { S: 'fusion' },
-			},
+			IndexName: 'view-type-index',
+			KeyConditionExpression: '#t = :fusion',
+			ExpressionAttributeNames: { '#t': 'type' },
+			ExpressionAttributeValues: { ':fusion': { S: 'fusion' } },
 			Limit: limit,
+			ScanIndexForward: false,
 			...(lastKey && {
 				ExclusiveStartKey: JSON.parse(Buffer.from(lastKey, 'base64').toString()),
 			}),
 		};
 
-		const result = await dynamo.send(new ScanCommand(input));
+		const result = await dynamo.send(new QueryCommand(input));
 
-		const sortedItems = (result.Items || [])
-			.map((item) => ({
-				createdAt: item.createdAt.S!,
-				data: JSON.parse(item.data.S || '{}'),
-			}))
-			.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+		const items = (result.Items || []).map((item) => ({
+			createdAt: item.createdAt.S!,
+			data: JSON.parse(item.data.S || '{}'),
+		}));
 
 		return {
 			statusCode: 200,
 			body: JSON.stringify({
-				items: sortedItems,
+				items: items,
 				lastKey: result.LastEvaluatedKey
 					? Buffer.from(JSON.stringify(result.LastEvaluatedKey)).toString('base64')
 					: null,

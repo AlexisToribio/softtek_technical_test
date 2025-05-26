@@ -21,6 +21,13 @@ export class SofttekStack extends Stack {
 			removalPolicy: RemovalPolicy.DESTROY,
 		});
 
+		table.addGlobalSecondaryIndex({
+			indexName: 'view-type-index',
+			partitionKey: { name: 'type', type: dynamodb.AttributeType.STRING },
+			sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
+			projectionType: dynamodb.ProjectionType.ALL,
+		});
+
 		const environment = {
 			TABLE_NAME: table.tableName,
 			SWAPI_API_URL: process.env.SWAPI_API_URL || '',
