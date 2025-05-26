@@ -15,12 +15,24 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ---
 
+## Documentación Swagger (OpenAPI)
+
+Puedes consultar y probar la documentación interactiva de la API en SwaggerHub:
+
+[https://app.swaggerhub.com/apis-docs/workspace-69d/softtek-api/1.0.0](https://app.swaggerhub.com/apis-docs/workspace-69d/softtek-api/1.0.0)
+
+---
+
+La especificación OpenAPI completa se encuentra también en [`openapi.yaml`](./openapi.yaml).
+
+---
+
 ## API Base
 
 La URL base para todas las peticiones es:
 
 ```
-https://5uqw9h2nde.execute-api.us-east-1.amazonaws.com/api/v1
+https://{apiId}.execute-api.us-east-1.amazonaws.com/api/v1
 ```
 
 ---
