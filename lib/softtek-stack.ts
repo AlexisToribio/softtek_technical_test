@@ -35,7 +35,7 @@ export class SofttekStack extends Stack {
 			PLANETS_API_KEY: process.env.PLANETS_API_KEY || '',
 		};
 
-		const optionsLambda = {
+		const lambdaOptions = {
 			architecture: lambda.Architecture.X86_64,
 			runtime: lambda.Runtime.NODEJS_20_X,
 			timeout: Duration.seconds(10),
@@ -54,7 +54,7 @@ export class SofttekStack extends Stack {
 			entry: path.join(__dirname, '../src/handlers/merged.ts'),
 			handler: 'handler',
 			environment,
-			...optionsLambda,
+			...lambdaOptions,
 		});
 
 		const storeLambda = new NodejsFunction(this, 'StoreHandler', {
@@ -63,7 +63,7 @@ export class SofttekStack extends Stack {
 			entry: path.join(__dirname, '../src/handlers/store.ts'),
 			handler: 'handler',
 			environment,
-			...optionsLambda,
+			...lambdaOptions,
 		});
 
 		const historyLambda = new NodejsFunction(this, 'HistoryHandler', {
@@ -72,7 +72,7 @@ export class SofttekStack extends Stack {
 			entry: path.join(__dirname, '../src/handlers/history.ts'),
 			handler: 'handler',
 			environment,
-			...optionsLambda,
+			...lambdaOptions,
 		});
 
 		table.grantReadWriteData(mergedLambda);
